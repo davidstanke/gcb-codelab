@@ -15,15 +15,15 @@
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: gceme-frontend-production
+  name: gceme-standalone-production
 spec:
   replicas:
   template:
     metadata:
-      name: frontend
+      name: standalone
       labels:
         app: gceme
-        role: frontend
+        role: standalone
         env: production
     spec:
       containers:
@@ -38,7 +38,7 @@ spec:
           httpGet:
             path: /healthz
             port: 80
-        command: ["sh", "-c", "app -mode=frontend -backend-service=http://gceme-backend:8080 -port=80"]
+        command: ["sh", "-c", "app -mode=standalone -port=80"]
         ports:
         - name: frontend
           containerPort: 80
