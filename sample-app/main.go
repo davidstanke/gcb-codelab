@@ -47,8 +47,8 @@ const version string = "1.0.0"
 
 func main() {
 	showversion := flag.Bool("version", false, "display version")
-	mode := flag.String("mode","backend","mode to run in [backend (default)|frontend|standalone]")
-	frontend := flag.Bool("frontend", false, "run in frontend mode")
+	mode := flag.String("mode", "backend", "mode to run in [backend (default)|frontend|standalone]")
+	// frontend := flag.Bool("frontend", false, "run in frontend mode")
 	port := flag.Int("port", 8080, "port to bind")
 	backend := flag.String("backend-service", "http://127.0.0.1:8081", "hostname of backend server")
 	flag.Parse()
@@ -62,14 +62,32 @@ func main() {
 		fmt.Fprintf(w, "%s\n", version)
 	})
 
-	log.Println("mode is: " + *mode)
-
-	if *frontend {
+	if *mode == "frontend" {
 		frontendMode(*port, *backend)
+	} else if *mode == "standalone" {
+		standaloneMode(*port)
 	} else {
 		backendMode(*port)
 	}
 
+}
+
+func standaloneMode(port int) {
+	// this mode serves as a frontend server that handles all logic itself (without need for a separate backend server)
+	log.Println("Operating in standalone mode...")
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		i := newInstance()
+		tpl := template.Must(template.New("out").Parse(html))
+		raw, _ := httputil.DumpRequest(r, true)
+		i.LBRequest = string(raw)
+		tpl.Execute(w, i)
+	})
+
+	http.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
 }
 
 func backendMode(port int) {
