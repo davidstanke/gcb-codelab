@@ -48,7 +48,6 @@ const version string = "1.0.0"
 func main() {
 	showversion := flag.Bool("version", false, "display version")
 	mode := flag.String("mode", "backend", "mode to run in [backend (default)|frontend|standalone]")
-	// frontend := flag.Bool("frontend", false, "run in frontend mode")
 	port := flag.Int("port", 8080, "port to bind")
 	backend := flag.String("backend-service", "http://127.0.0.1:8081", "hostname of backend server")
 	flag.Parse()
