@@ -7,6 +7,8 @@ steps:
   env: ['PROJECT_ROOT=app']  
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '.', '--tag=gcr.io/$PROJECT_ID/gceme:latest']
+- name: 'gcr.io/cloud-builders/gcloud-slim'
+  args: ['container','clusters','get-credentials','gceme-prod']
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['apply','-f','k8s/production/standalone-production.yaml']
   
