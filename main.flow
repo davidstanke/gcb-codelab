@@ -1,0 +1,7 @@
+flow "Untitled flow" {
+  on = "push"
+  resolves = "Build image"
+}
+ task "Build image" {
+  uses = "google-cloud-build"
+}
